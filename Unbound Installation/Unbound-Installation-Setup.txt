@@ -1,0 +1,131 @@
+
+ ----------------------------
+|   Installation - Unbound   |
+ ----------------------------
+
+Unbound is a recursive DNS server that is supposed to be used as a firewall to block certain websites before the computer can connect to them; it is just another option to use your own DNS server with custom settings to block ads, tracking, crypto, and more.
+
+Documentation: https://docs.pi-hole.net/guides/dns/unbound/?h=unbound
+
+Step 1: Install Unbound on a system that already has a Pi-Hole. Linux command below:
+
+ -    sudo apt install unbound
+
+Step 2: After the installation of unbound, you will need to access the configuration file on unbound. Linux command below:
+
+ -    sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
+
+Step 3: By accessing the configuration file, you can copy and paste the code from the documentation in order to get it started. After the copy and paste of the config file, you should hold down "CRTL" and "X", then type "Y", and press the "Enter" button to save the modification.
+
+Step 4: Now we need to start the unbound service in order to get the DNS server running. Linux command below:
+
+ -    sudo service unbound start
+
+Step 5: Then test to see if Unbound and validation towards DNSSEC are working by writing commands on the Linux terminal. Linux command below:
+
+Unbound Test:
+
+ -    dig pi-hole.net @127.0.0.1 -p 5335
+
+Validation Towards DNSSEC:
+
+ -    dig fail01.dnssec.works @127.0.0.1 -p 5335
+ -    dig dnssec.works @127.0.0.1 -p 5335
+
+Step 6: After being able to get a ping from pi-hole.net, the first ping will give "SERVFAIL," and the second ping will give "NOERROR," which means the unbound is working.
+
+Step 7: Login into Pi-hole, then go to "Settings" and click on "DNS" at the top of the webpage. Uncheck IPv4 and IPv6 upstream DNS servers.
+
+Step 8: Go down to "Upstream DNS Servers", click, and check the box for "Custom 1 (IPv4)"; under the empty box, type in 127.0.0.1, which is the unbound DNS server setup based on the configuration file. The port number (#) of the unbound DNS server is 5335. The Linux command below should look like this in an empty box:
+
+ -    127.0.0.1#5335
+
+Step 9: Go all the way down and click the save button to save the modified data.
+
+Step 10: Then, go login into the router and find a setting for the router with related DNS servers, then change the IP address to the IP address of Pi-Hole's firewall. Which is the IP address that the Pi-Hole installer gave at the beginning of the installation. Note: If you want Pi-Hole to have an IPv6 DNS server, then there will be a section for IPv6 setup.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=============================================================================================================================================================================================================================================
+												Unbound / Pi-Hole IPv6 DNS Server Setup
+=============================================================================================================================================================================================================================================
+
+IPv6 setup is for people who want to use IPv6 addresses on DNS servers. Remember that you will need to add extra code to the unbound configuration file to activate it, and then add the same IPv6 address to the Pi-Hole settings on the DNS server settings.
+
+Step 1: Modify the Unbound file configuration by adding IPv6 support on the Unbound server. By accessing the editor through the terminal or SSH.
+
+Step 2: On a Linux terminal, increase user privileges by adding "sudo su." since some distros won't allow a standard user to modify code.
+
+Step 3: Type "sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf" in order to access the unbound configuration files.
+
+Step 4: Put some space between lines of code to include the code. And copy the code below, which allows internet access through IPv6 and gives an IPv6 address for unbound.
+
+    # May be set to yes if you have IPv6 connectivity
+    do-ip6: yes
+
+    # interface: <ip address[@port]>
+    # Interface to use to connect to the network. This interface is
+    # listened to for queries from clients, and answers to clients are
+    # given from it. Can be given multiple times to work on several
+    # interfaces. If none are given the default is to listen to local-
+    # host. If an interface name is used instead of an ip address,
+    # the list of ip addresses on that interface are used. The inter-
+    # faces are not changed on a reload (kill -HUP) but only on
+    # restart. A port number can be specified with @port (without
+    # spaces between interface and port number), if not specified  the
+    # default port (from port) is used.
+    interface: ::1
+
+Step 5: After adding the code to the unbound configuration file, press "CRTL" + "X", then it will ask, "Are you going to save?" Press "Y."
+
+Step 6: You will then need to restart the unbound service by adding a code into the terminal. By adding the code below.
+
+- sudo service unbound restart
+
+Step 7: Test if unbound is a working property by using the code below. After showing results on an unbound connection and saying the status of the connection, if it says "NOERROR", then it's fine. However, if the status says "ERROR," then something is wrong in the setup; it usually depends on what code was included.
+
+- dig pi-hole.net @::1 -p 5335
+
+Step 8: After the test, we could go to Pi-Hole and add a DNS server, which is in "Settings", then click the top left button that says "DNS" and make sure you uncheck any "Upstream DNS Servers" since you're using your own DNS server. Under "Upstream DNS Servers," "Custom 1 (IPv4)" should be 127.0.0.1#5335, and "Custom 3 (IPv6)" should be ::1#5335. For Example:
+
+- Custom 1 (IPv4):
+Checked
+127.0.0.1#5335
+
+- Custom 2 (IPv4):
+Not Checked
+[Empty]
+
+- Custom 3 (IPv6):
+Checked
+::1#5335
+
+- Custom 4 (IPv6):
+Not Checked
+[Empty]
+
+Step 10: Under "Advanced DNS Settings," it's your choice if you want to enable some of the settings; however, you should disable "Use DNSSEC" since Unbound is already doing it, so it's not necessary to have it enabled. Then, after they are typed and checked, go down the webpage and click "Save". 
+
+Step 11: Click on "DHCP" and click "DHCP server enabled" if you want Pi-Hole to become a DHCP server, which reduces the load on the router by minimizing multitasking on managing IP addresses and routing network devices. However, DHCP on IPv6 sometimes gives errors; this usually means the router or modem is not supporting IPv6 addresses. Some modems and routers support IPv6; it depends on which ISP is using their services.
+
+Step 12: Under "DHCP server enabled," the IP address should be From: 192.168.xxx.2 to: 192.168.xxx.254 for the gateway, which should be the IP address of the router.
+
+Step 13: Login to the router to add DNS for the IPv6 DNS server from what was given by Pi-Hole.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=============================================================================================================================================================================================================================================
+												Unbound / Pi-Hole DNSSEC Section
+=============================================================================================================================================================================================================================================
+
+Please disable all the features for DNSSEC in the Pihole GUI if you use Unbound. The section to disable the features is in:
+
+Step 1: Login to the Pi-Hole GUI through your IP address. If you forgot your IP address, login to your router and test or find all your IP addresses to access Pi-Hole.
+
+Step 2: Go to "Settings", then click on "DNS" at the top of the webpage. Scroll down until you see "Advanced DNS Settings".
+
+Step 3: Uncheck "Never forward non-FQDN A and AAAA queries," "Never forward reverse lookups for private IP ranges," and "Use DNSSEC."
+
+Step 4: In "Rate-Limiting," change the values on both "blocking clients" and "queries" into 0.
+
+Step 5: Press "Save" down below the webpage. In order to keep the settings. Done.

@@ -1,0 +1,41 @@
+
+=============================================================================================================================================================================================================================================
+													Testing Section
+=============================================================================================================================================================================================================================================
+
+Access the Unbound Editor: sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
+ 
+Start Unbound: sudo service unbound start
+ 
+Restart Unbound: sudo service unbound restart
+ 
+Testing Unbound is Working:
+
+- dig pi-hole.net @127.0.0.1 -p 5335
+
+Test Validation Towards DNSSEC:
+
+- dig fail01.dnssec.works @127.0.0.1 -p 5335
+- dig dnssec.works @127.0.0.1 -p 5335
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=============================================================================================================================================================================================================================================
+			    										Linux Optimization Section
+=============================================================================================================================================================================================================================================
+
+Changing Priority Process:
+
+To access the "Priority Process" section in Linux. Must type:
+
+- htop
+
+Then find "unbound" in the USER section of the list. Copy the PID of Unbound, then press "R" on the keyboard in order to change the priority process.
+
+First, it will ask for the PID of a certain process.
+
+- PID Value
+
+Second, it will ask for the niceness value. A value from 20 to 0 will use fewer processor resources and be less focused. A value from -20 to -1 will increase processor resources and make them more focused.
+
+- Niceness Value
