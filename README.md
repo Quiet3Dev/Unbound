@@ -21,5 +21,3 @@ The configuration file in Unbound could be used for any system that supports Lin
 Tweaks and Optimization for Unbound Documentation:
 
 - https://unbound.docs.nlnetlabs.nl/en/latest/manpages/unbound.conf.html
-
-------------------------------------------------------------------------
