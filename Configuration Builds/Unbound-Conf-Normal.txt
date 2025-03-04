@@ -370,7 +370,7 @@ server:
     # This manages the total memory usage of the server (under heavy use), the
     # number of requests that can be queued up per connection is also limited,
     # with further requests waiting in TCP buffers.
-    stream-wait-size: 1g
+    stream-wait-size: 9g
 
     # Maximum  number  of bytes used for all HTTP/2 query buffers com-
     # bined. These buffers contain (partial) DNS queries waiting  for
@@ -378,7 +378,7 @@ server:
     # streams exceeding this limit. Default is 4 megabytes. A plain
     # number is in bytes, append 'k', 'm' or 'g' for kilobytes,
     # megabytes or gigabytes (1024*1024 bytes in a megabyte).
-    http-query-buffer-size: 1g
+    http-query-buffer-size: 9g
 
     # Maximum number of bytes used for all HTTP/2 response buffers
     # combined. These buffers contain DNS responses waiting to be
@@ -386,13 +386,13 @@ server:
     # to streams exceeding this limit. Default is 4 megabytes. A plain
     # number is in bytes, append 'k', 'm' or 'g' for kilobytes,
     # megabytes or gigabytes (1024*1024 bytes in a megabyte).
-    http-response-buffer-size: 1g
+    http-response-buffer-size: 9g
 
     # Number of bytes size of the message cache. Default is 4
     # megabytes. A plain number is in bytes, append 'k', 'm' or 'g'
     # for kilobytes, megabytes or gigabytes (1024*1024 bytes in a
     # megabyte).
-    msg-cache-size: 9999g
+    msg-cache-size: 99999g
 
     # Set TCP_NODELAY socket option on sockets used to provide DNS-over-HTTPS service.
     # Ignored if the option is not available.
